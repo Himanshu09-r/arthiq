@@ -9,3 +9,5 @@ python-multipart
 apscheduler
 sarvamai
 pytest
+psycopg[binary]>=3.2
+itsdangerous>=2.2
