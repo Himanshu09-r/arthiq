@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "https://arthiq-fu90.onrender.com/$1"
+    }
+  ]
+}
