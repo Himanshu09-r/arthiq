@@ -1,0 +1,63 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arthiq Stock & Cash</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#f3f5f9;color:#12263f;font-size:14px}
+header{background:#00294f;color:#fff;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header b{font-size:18px}header a{color:#9cf}
+button{border:0;border-radius:6px;padding:7px 11px;background:#00baf2;color:#fff;cursor:pointer;font-size:13px;margin:2px}
+button.g{background:#16a34a}button.r{background:#dc2626}button.o{background:#f59e0b}
+main{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:12px;padding:12px}
+.card{background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px #0002}.card h3{margin:0 0 8px;color:#00294f}
+table{width:100%;border-collapse:collapse}td,th{padding:4px 6px;border-bottom:1px solid #eee;text-align:left}
+.tag{display:inline-block;padding:1px 7px;border-radius:9px;font-size:11px;background:#e5e7eb}
+.low{background:#fecaca}.exp{background:#fde68a}.dead{background:#ddd6fe}
+.box{background:#eef2ff;border-radius:8px;padding:8px;margin:6px 0;white-space:pre-wrap}
+input{padding:6px;font-size:14px;width:110px}
+</style></head><body>
+<header><b>ARTHIQ · Stock &amp; Cash</b><a href="/">← voice app</a><a href="/console">collections console</a></header>
+<main>
+<div class="card"><h3>Smart alerts (top 3)</h3><div id="alerts"></div>
+<button onclick="new Audio('/stock/alerts/audio').play().catch(()=>alert('Voice unavailable'))">▶ Speak alerts</button></div>
+
+<div class="card"><h3>Cash Guardian</h3>
+Cash ₹ <input id="cash" type="number"> Payables ₹ <input id="pay" type="number" value="0">
+<button onclick="saveCash()">Save</button>
+<div id="cg" class="box">…</div>
+<button onclick="new Audio('/cash/guardian/audio').play().catch(()=>alert('Voice unavailable'))">▶ Explain by voice</button>
+<table id="buy"></table><div id="coll"></div></div>
+
+<div class="card"><h3>Supplier order (needs approval)</h3>
+<button class="o" onclick="draft()">Draft order from buy list</button><div id="ord"></div></div>
+
+<div class="card"><h3>Daily briefing</h3>
+<label><input type="checkbox" id="sm" checked style="width:auto"> LLM smoothing</label>
+<button onclick="brief()">Generate</button>
+<button onclick="new Audio('/briefing/audio').play().catch(()=>alert('Voice unavailable, text shown'))">▶ Play</button>
+<div id="br" class="box">—</div></div>
+
+<div class="card" style="grid-column:1/-1"><h3>Stock</h3><table id="stock"></table></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function j(p,b){const o=b===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)};return (await fetch(p,o)).json();}
+async function saveCash(){const c=$('cash').value,p=$('pay').value;await j('/cash',{cash:c===''?null:parseInt(c),payables:p===''?null:parseInt(p)});load();}
+async function draft(){const r=await j('/orders/draft',{});if(r.status==='need_cash'||r.status==='nothing_to_order')alert(r.text||'Nothing to order');load();}
+async function act(id,what,body){await j('/approvals/'+id+'/'+what,body||{});load();}
+async function brief(){const r=await j('/briefing/today?smooth='+($('sm').checked?1:0));$('br').textContent=r.text+'\n['+r.source+']';}
+async function load(){
+ const s=await j('/stock/status');
+ $('alerts').innerHTML=s.alerts.map(a=>`<div class="box"><span class="tag ${a.kind=='low'||a.kind=='out'?'low':a.kind=='expiry'?'exp':'dead'}">${a.kind}</span> ${esc(a.text)}</div>`).join('')||'<i>no alerts</i>';
+ $('stock').innerHTML='<tr><th>Item</th><th>Stock</th><th>Sold/day</th><th>Reorder at</th><th>Days left</th><th>Flags</th></tr>'+s.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.stock} ${esc(i.unit)}</td><td>${i.daily}</td><td>${i.reorder_point}</td><td>${i.days_left==null?'–':i.days_left}</td><td>${i.low?'<span class="tag low">low</span>':''}${i.near_expiry?'<span class="tag exp">expiry '+i.expiry_days+'d</span>':''}${i.dead?'<span class="tag dead">dead</span>':''}</td></tr>`).join('');
+ const g=await j('/cash/guardian');
+ if(g.need_cash){$('cg').textContent=g.text;$('buy').innerHTML='';$('coll').innerHTML='';}
+ else{ if(document.activeElement.id!=='cash')$('cash').value=g.cash; if(document.activeElement.id!=='pay')$('pay').value=g.payables;
+  $('cg').textContent=g.text+'\n\n(Dues ₹'+g.receivable+' are NOT counted as cash. Budget ₹'+g.budget+')';
+  $('buy').innerHTML='<tr><th>Buy now</th><th>Qty</th><th>Cost</th></tr>'+g.buy.map(b=>`<tr><td>${esc(b.name)}</td><td>${b.qty} ${esc(b.unit)}</td><td>₹${b.cost}</td></tr>`).join('')+g.skipped.map(b=>`<tr style="color:#888"><td>${esc(b.name)} (later)</td><td>${b.qty} ${esc(b.unit)}</td><td>₹${b.cost}</td></tr>`).join('');
+  $('coll').innerHTML='<b>Chase first:</b> '+(g.collect.map(c=>esc(c.name)+' ₹'+c.balance+(c.overdue?' (overdue ₹'+c.overdue+')':'')).join(', ')||'–');}
+ const o=await j('/orders/pending');
+ $('ord').innerHTML=o.map(a=>`<div class="box">${esc(a.message)}\n<b>Total ≈ ₹${a.total}</b></div><button class="g" onclick="act(${a.id},'approve')">Approve &amp; send (simulated)</button><button class="r" onclick="act(${a.id},'reject')">Reject</button><br>
+ Say / type yes or no: <input id="ans${a.id}" placeholder="haan / nahi"><button onclick="act(${a.id},'answer',{text:$('ans${a.id}').value})">Send</button>`).join('')||'<i>no pending order</i>';
+}
+load();
+</script></body></html>

@@ -1,0 +1,55 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arthiq Collections Console</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#f3f5f9;color:#12263f;font-size:14px}
+header{background:#00294f;color:#fff;padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+header b{font-size:18px;margin-right:8px}button{border:0;border-radius:6px;padding:7px 11px;background:#00baf2;color:#fff;cursor:pointer;font-size:13px}
+button.o{background:#f59e0b}button.g{background:#6b7280}button.r{background:#16a34a}
+main{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:12px;padding:12px}
+.card{background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px #0002}.card h3{margin:0 0 8px;color:#00294f}
+table{width:100%;border-collapse:collapse}td,th{padding:4px 6px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
+.msg{padding:6px 8px;border-radius:8px;margin-bottom:6px}.out{background:#e7f6ec}.in{background:#e8f0ff}.meta{font-size:11px;color:#667}
+input,select{padding:6px;font-size:14px}.chips button{margin:2px;background:#e5e7eb;color:#111}
+.tag{display:inline-block;padding:1px 7px;border-radius:9px;background:#e5e7eb;font-size:11px}
+.OVERDUE,.DISPUTED{background:#fecaca}.FULFILLED{background:#bbf7d0}.PENDING{background:#fde68a}
+</style></head><body>
+<header><b>ARTHIQ · Collections</b><span id="clock"></span>
+<button onclick="adv(0,6)">+6 hours</button><button onclick="adv(1,0)">+1 day</button><button onclick="adv(3,0)">+3 days</button>
+<button onclick="adv(7,0)">+7 days</button><button onclick="adv(15,0)">+15 days</button><button class="g" onclick="post('/demo/reset_clock').then(load)">Reset clock</button>
+<button class="o" onclick="runTick()">▶ Run scheduler now</button>
+<label><input type="checkbox" id="snd" checked> 🔊 voice alerts</label><a href="/" style="color:#9cf">← voice app</a></header>
+<main>
+<div class="card"><h3>Customers</h3><table id="cust"></table></div>
+<div class="card"><h3>Simulate customer reply (WhatsApp)</h3>
+<select id="who"></select> <input id="txt" size="28" placeholder="customer reply...">
+<button onclick="reply()">Send</button><div class="chips" id="chips"></div><pre id="rres" style="white-space:pre-wrap;font-size:12px"></pre></div>
+<div class="card"><h3>Shop voice alerts</h3><div id="alerts"></div></div>
+<div class="card"><h3>Approval inbox</h3><div id="appr"></div></div>
+<div class="card"><h3>Promises (Arthiq Memory)</h3><table id="com"></table></div>
+<div class="card"><h3>WhatsApp outbox (simulated)</h3><div id="out"></div></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function post(p,b){const r=await fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});return r.json();}
+async function adv(d,h){await post('/demo/advance',{days:d,hours:h});load();}
+async function runTick(){const r=await post('/demo/tick');$('rres').textContent='tick: sent '+r.sent.length+', ladder '+r.ladder.length+', promises '+r.promises.length;load();}
+async function reply(){const t=$('txt').value.trim();if(!t)return;const r=await post('/webhooks/whatsapp',{customer_id:parseInt($('who').value),text:t});$('rres').textContent=JSON.stringify(r,null,1);$('txt').value='';load();}
+async function resolve(id){await post('/approvals/'+id+'/resolve');load();}
+['Friday ko dunga','kal 5 baje de dunga','Maine pay kar diya','Ye galat hai, maine nahi liya','Message mat bhejo','Thoda time chahiye'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{$('txt').value=t};$('chips').appendChild(b);});
+let lastAlert=null;
+async function load(){
+ const s=await (await fetch('/state')).json();
+ $('clock').textContent='🕒 '+s.now.replace('T',' ').slice(0,16)+(s.offset_days?'  (+'+s.offset_days+' d demo)':'');
+ $('cust').innerHTML='<tr><th>Name</th><th>Owes</th><th>Trust</th><th>Flags</th></tr>'+s.customers.map(c=>`<tr><td>${esc(c.name)}</td><td>₹${c.balance}</td><td>${c.trust}</td><td>${c.paused?'<span class=tag>paused</span>':''}${c.opt_in?'':'<span class=tag>opted out</span>'}</td></tr>`).join('');
+ const cur=$('who').value;$('who').innerHTML=s.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');if(cur)$('who').value=cur;
+ $('out').innerHTML=s.outbox.map(m=>`<div class="msg ${m.dir}"><div class="meta">${m.dir=='out'?'➡ to':'⬅ from'} ${esc(m.customer)} · ${esc(m.channel)} · ${esc(m.label||'')} · ${esc(m.at.slice(5,16).replace('T',' '))}</div>${esc(m.text)}${m.link?`<div><a href="${esc(m.link)}" target="_blank">${esc(m.link)}</a></div>`:''}</div>`).join('')||'<i>empty</i>';
+ $('appr').innerHTML=s.approvals.map(a=>`<div class="msg" style="background:#fff7ed"><b>${esc(a.kind)}</b> · ${esc(a.customer||'')}<div class="meta">${esc(JSON.stringify(a.payload))}</div><button class="r" onclick="resolve(${a.id})">Resolve</button></div>`).join('')||'<i>nothing pending</i>';
+ $('com').innerHTML='<tr><th>Customer</th><th>₹</th><th>Due</th><th>State</th></tr>'+s.commitments.map(c=>`<tr><td>${esc(c.customer)}</td><td>${c.amount}</td><td>${esc(c.due_at.slice(5,16).replace('T',' '))}</td><td><span class="tag ${c.state}">${c.state}</span></td></tr>`).join('');
+ $('alerts').innerHTML=s.alerts.map(a=>`<div class="msg" style="background:#eef2ff">🔔 ${esc(a.text)} <button onclick="new Audio('/alerts/${a.id}/audio').play()">▶</button></div>`).join('')||'<i>none yet</i>';
+ const top=s.alerts.length?s.alerts[0].id:0;
+ if(lastAlert===null){lastAlert=top;}
+ else if(top>lastAlert){lastAlert=top;if($('snd').checked){new Audio('/alerts/'+top+'/audio').play().catch(()=>{});}}
+}
+load();setInterval(load,3000);
+</script></body></html>

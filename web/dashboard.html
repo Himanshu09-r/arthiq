@@ -1,0 +1,115 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arthiq Dashboard</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#f3f5f9;color:#12263f;font-size:14px}
+header{background:#00294f;color:#fff;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header b{font-size:18px}header a{color:#9cf;text-decoration:none}
+nav{display:flex;gap:6px;padding:10px 12px 0;flex-wrap:wrap}
+nav button{background:#dbe4f0;color:#00294f;border:0;border-radius:8px 8px 0 0;padding:9px 16px;cursor:pointer;font-size:14px}
+nav button.on{background:#fff;font-weight:600}
+.badge{background:#dc2626;color:#fff;border-radius:9px;padding:0 7px;font-size:11px;margin-left:5px}
+section{display:none;background:#fff;margin:0 12px 12px;padding:14px;border-radius:0 10px 10px 10px;box-shadow:0 1px 4px #0002}
+section.on{display:block}
+button.b{border:0;border-radius:6px;padding:7px 12px;background:#00baf2;color:#fff;cursor:pointer;font-size:13px;margin:3px 4px 3px 0}
+button.g{background:#16a34a}button.r{background:#dc2626}button.o{background:#f59e0b}button.x{background:#6b7280}
+.item{border:1px solid #e5e7eb;border-left:5px solid #00baf2;border-radius:8px;padding:10px;margin-bottom:10px}
+.item.escalation,.item.dispute{border-left-color:#dc2626}.item.supplier_order{border-left-color:#f59e0b}
+.kind{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#667}
+.msg{padding:6px 8px;border-radius:8px;margin-bottom:6px}.out{background:#e7f6ec}.in{background:#e8f0ff}.meta{font-size:11px;color:#667}
+pre.m{background:#f4f6fa;border-radius:6px;padding:8px;white-space:pre-wrap;font-family:inherit}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:5px 6px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
+td.a{font-family:ui-monospace,monospace;font-size:11px;color:#445;word-break:break-all}
+select,input{padding:6px;font-size:14px}.box{background:#eef2ff;border-radius:8px;padding:10px;margin:8px 0;white-space:pre-wrap}
+.rec{background:#dc2626!important}.dim{color:#888}
+</style></head><body>
+<header><b>ARTHIQ · Shopkeeper Dashboard</b><a href="/">🎙 Voice app</a><a href="/console">Collections console</a><a href="/insights">Stock &amp; Cash</a></header>
+<nav id="nav"></nav>
+
+<section id="t_inbox"><div id="inbox"></div><h4 class="dim">Recently decided</h4><div id="recent" class="dim"></div><div id="vmsg" class="box" style="display:none"></div></section>
+
+<section id="t_audit">
+<select id="ftool"><option value="">all tools</option></select>
+<select id="factor"><option value="">all actors</option></select>
+<input id="fq" placeholder="search (e.g. block, Ramesh)" size="24">
+<button class="b" onclick="loadAudit()">Apply</button>
+<span class="dim">Append-only log: every rule decision and action. Nothing here can be edited.</span>
+<table id="audit"></table></section>
+
+<section id="t_outbox"><div id="outbox"></div></section>
+
+<section id="t_brief">
+<label><input type="checkbox" id="sm" checked> LLM smoothing</label>
+<button class="b" onclick="brief()">Generate today's briefing</button>
+<button class="b g" onclick="playBrief()">▶ Play</button>
+<div id="br" class="box">—</div>
+<div class="dim">Tip: generate it before fast-forwarding the demo clock, or "today's sales" will read 0.</div></section>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TABS=[['inbox','Approval inbox'],['audit','Audit log'],['outbox','Outbox'],['brief','Briefing']];
+let tab='inbox',pending=0;
+function drawNav(){$('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k==tab?'on':''}" onclick="go('${k}')">${l}${k=='inbox'&&pending?'<span class="badge">'+pending+'</span>':''}</button>`).join('');
+ TABS.forEach(([k])=>$('t_'+k).classList.toggle('on',k==tab));}
+function go(k){tab=k;drawNav();refresh();}
+async function j(p,b){const o=b===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)};return (await fetch(p,o)).json();}
+async function act(id,a){await j('/inbox/'+id+'/act',{action:a});loadInbox();}
+
+function card(i){
+ const btn=i.actions.map(a=>`<button class="b ${a.style}" onclick="act(${i.id},'${a.id}')">${esc(a.label)}</button>`).join('');
+ const mic=i.kind=='supplier_order'?`<button class="b" id="mic${i.id}" onclick="mic(${i.id})">🎙 Say yes / no</button>`:'';
+ return `<div class="item ${i.kind}"><div class="kind">${esc(i.kind.replace('_',' '))}${i.customer?' · '+esc(i.customer):''} · ${esc(i.at.slice(5,16).replace('T',' '))}</div>
+ <div>${esc(i.summary)}</div>${i.message?`<pre class="m">${esc(i.message)}</pre>`:''}<div>${btn}${mic}</div></div>`;}
+async function loadInbox(){
+ const d=await j('/inbox');pending=d.pending.length;drawNav();
+ $('inbox').innerHTML=d.pending.map(card).join('')||'<i>Inbox is empty. Nothing needs you right now. ✅</i>';
+ $('recent').innerHTML=d.recent.map(i=>`<div>• ${esc(i.kind)}${i.customer?' · '+esc(i.customer):''} → ${esc(i.decision||i.status)}</div>`).join('')||'<i>none</i>';}
+
+async function loadAudit(){
+ const p=new URLSearchParams({limit:150,tool:$('ftool').value,actor:$('factor').value,q:$('fq').value});
+ const d=await j('/audit?'+p);
+ const keep=(sel,list,all)=>{const cur=sel.value;sel.innerHTML=`<option value="">${all}</option>`+list.map(x=>`<option>${esc(x)}</option>`).join('');sel.value=cur;};
+ keep($('ftool'),d.tools,'all tools');keep($('factor'),d.actors,'all actors');
+ $('audit').innerHTML='<tr><th>Time</th><th>Actor</th><th>Tool</th><th>Decision</th><th>Approved by</th><th>Details</th></tr>'+
+  d.rows.map(r=>`<tr><td>${esc(r.at.slice(5,19).replace('T',' '))}</td><td>${esc(r.actor)}</td><td>${esc(r.tool)}</td><td>${esc(r.decision)}</td><td>${esc(r.approved_by||'')}</td><td class="a">${esc(r.args)}</td></tr>`).join('');}
+
+async function loadOutbox(){
+ const s=await j('/state');
+ $('outbox').innerHTML=s.outbox.map(m=>`<div class="msg ${m.dir}"><div class="meta">${m.dir=='out'?'➡ to':'⬅ from'} ${esc(m.customer)} · ${esc(m.channel)} · ${esc(m.label||'')} · ${esc(m.at.slice(5,16).replace('T',' '))}</div>${esc(m.text)}${m.link?`<div><a href="${esc(m.link)}" target="_blank">${esc(m.link)}</a></div>`:''}</div>`).join('')||'<i>empty</i>';}
+
+async function brief(){const r=await j('/briefing/today?smooth='+($('sm').checked?1:0));$('br').textContent=r.text+'\n['+r.source+']';}
+function playBrief(){new Audio('/briefing/audio?'+Date.now()).play().catch(()=>alert('Voice unavailable. The text is shown instead.'));}
+
+/* ---- mic: record, convert to 16 kHz mono WAV, send ---- */
+async function toWav(blob){
+ const ac=new (window.AudioContext||window.webkitAudioContext)();
+ const dec=await ac.decodeAudioData(await blob.arrayBuffer());
+ const off=new OfflineAudioContext(1,Math.max(1,Math.ceil(dec.duration*16000)),16000);
+ const src=off.createBufferSource();src.buffer=dec;src.connect(off.destination);src.start();
+ const d=(await off.startRendering()).getChannelData(0);
+ const v=new DataView(new ArrayBuffer(44+d.length*2));
+ const w=(o,s)=>[...s].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+ w(0,'RIFF');v.setUint32(4,36+d.length*2,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+ v.setUint32(24,16000,true);v.setUint32(28,32000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,d.length*2,true);
+ for(let i=0;i<d.length;i++){const s=Math.max(-1,Math.min(1,d[i]));v.setInt16(44+i*2,s<0?s*0x8000:s*0x7fff,true);}
+ return new Blob([v],{type:'audio/wav'});}
+let rec=null;
+async function mic(id){
+ const b=$('mic'+id),box=$('vmsg');
+ if(rec){rec.stop();return;}
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:true});
+  const chunks=[];rec=new MediaRecorder(st);
+  rec.ondataavailable=e=>chunks.push(e.data);
+  rec.onstop=async()=>{st.getTracks().forEach(t=>t.stop());rec=null;b.classList.remove('rec');b.textContent='🎙 Say yes / no';
+   box.style.display='block';box.textContent='Understanding…';
+   try{const wav=await toWav(new Blob(chunks));const fd=new FormData();fd.append('audio',wav,'a.wav');
+    const r=await (await fetch('/inbox/'+id+'/voice',{method:'POST',body:fd})).json();
+    box.textContent='You said: "'+(r.transcript||'')+'" → '+(r.status=='done'?'approved ✅':r.status=='rejected'?'rejected ❌':r.status=='unclear'?"didn't catch yes/no, please try again":r.status||r.detail);
+   }catch(e){box.textContent='Voice failed: '+e;}
+   loadInbox();};
+  rec.start();b.classList.add('rec');b.textContent='⏹ Listening… tap to stop';setTimeout(()=>{if(rec)rec.stop();},8000);
+ }catch(e){alert('Microphone not available: '+e);}}
+
+function refresh(){if(tab=='inbox')loadInbox();else if(tab=='audit')loadAudit();else if(tab=='outbox')loadOutbox();}
+drawNav();loadInbox();setInterval(()=>{if(!rec&&tab!='brief')refresh();},4000);
+</script></body></html>

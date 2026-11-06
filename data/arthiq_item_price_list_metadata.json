@@ -1,0 +1,687 @@
+{
+  "rice": {
+    "sku": "GRO-RICE-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "chawal",
+      "चावल",
+      "rice"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "basmati rice": {
+    "sku": "GRO-RICE-002",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "basmati",
+      "basmati chawal",
+      "बासमती चावल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "whole wheat": {
+    "sku": "GRO-WHEAT-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "gehun",
+      "wheat",
+      "गेहूं"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "atta": {
+    "sku": "GRO-ATTA-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg pack",
+    "aliases": [
+      "aata",
+      "atta",
+      "flour",
+      "आटा"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "maida": {
+    "sku": "GRO-MAIDA-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg pack",
+    "aliases": [
+      "मैदा",
+      "refined flour"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "besan": {
+    "sku": "GRO-BESAN-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg pack",
+    "aliases": [
+      "gram flour",
+      "besan",
+      "बेसन"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "sugar": {
+    "sku": "GRO-SUGAR-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "cheeni",
+      "chini",
+      "sugar",
+      "शक्कर",
+      "चीनी"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "salt": {
+    "sku": "GRO-SALT-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg pack",
+    "aliases": [
+      "namak",
+      "नमक",
+      "iodized salt"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "chana dal": {
+    "sku": "GRO-CHANA-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "chana dal",
+      "चना दाल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "toor dal": {
+    "sku": "GRO-TOOR-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "arhar dal",
+      "tur dal",
+      "अरहर दाल",
+      "तूर दाल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "moong dal": {
+    "sku": "GRO-MOONG-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "mung dal",
+      "मूंग दाल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "urad dal": {
+    "sku": "GRO-URAD-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "urad",
+      "उड़द दाल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "rajma": {
+    "sku": "GRO-RAJMA-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "rajmah",
+      "राजमा"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "chickpeas": {
+    "sku": "GRO-KABULI-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "kabuli chana",
+      "chhole",
+      "काबुली चना"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "mustard oil": {
+    "sku": "OIL-MUSTARD-001",
+    "category": "Edible Oil & Ghee",
+    "pack_size": "1 litre pouch",
+    "aliases": [
+      "sarson tel",
+      "mustard tel",
+      "सरसों तेल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "refined oil": {
+    "sku": "OIL-REFINED-001",
+    "category": "Edible Oil & Ghee",
+    "pack_size": "1 litre pouch",
+    "aliases": [
+      "cooking oil",
+      "oil",
+      "tel",
+      "तेल",
+      "refined tel"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "sunflower oil": {
+    "sku": "OIL-SUNFLOWER-001",
+    "category": "Edible Oil & Ghee",
+    "pack_size": "1 litre pouch",
+    "aliases": [
+      "sunflower tel",
+      "सूरजमुखी तेल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "ghee": {
+    "sku": "OIL-GHEE-001",
+    "category": "Edible Oil & Ghee",
+    "pack_size": "1 kg tin",
+    "aliases": [
+      "घी",
+      "desi ghee"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "butter": {
+    "sku": "OIL-BUTTER-001",
+    "category": "Dairy",
+    "pack_size": "100 g pack",
+    "aliases": [
+      "makhan",
+      "मक्खन"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "maggi noodles": {
+    "sku": "FOD-MAG-001",
+    "category": "Packaged Food",
+    "pack_size": "70 g packet",
+    "aliases": [
+      "maggi",
+      "maggie",
+      "noodles",
+      "मैगी"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "instant noodles": {
+    "sku": "FOD-NOOD-001",
+    "category": "Packaged Food",
+    "pack_size": "pack of 1",
+    "aliases": [
+      "noodles",
+      "instant noodles",
+      "नूडल्स"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "parle-g biscuits": {
+    "sku": "FOD-PG-001",
+    "category": "Packaged Food",
+    "pack_size": "small packet",
+    "aliases": [
+      "parle g",
+      "parleg",
+      "पारले जी"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "good day biscuits": {
+    "sku": "FOD-GD-001",
+    "category": "Packaged Food",
+    "pack_size": "small packet",
+    "aliases": [
+      "goodday",
+      "good day",
+      "गुड डे"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "marie biscuits": {
+    "sku": "FOD-MARIE-001",
+    "category": "Packaged Food",
+    "pack_size": "small packet",
+    "aliases": [
+      "marie",
+      "marie gold",
+      "मैरी"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "hide & seek biscuits": {
+    "sku": "FOD-HS-001",
+    "category": "Packaged Food",
+    "pack_size": "small packet",
+    "aliases": [
+      "hide and seek",
+      "hide n seek"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "cream biscuits": {
+    "sku": "FOD-CREAM-001",
+    "category": "Packaged Food",
+    "pack_size": "small packet",
+    "aliases": [
+      "cream biscuit",
+      "क्रीम बिस्किट"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "kurkure": {
+    "sku": "FOD-KUR-001",
+    "category": "Packaged Snacks",
+    "pack_size": "small pack",
+    "aliases": [
+      "kurkura",
+      "कुरकुरे"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "lays chips": {
+    "sku": "FOD-LAYS-001",
+    "category": "Packaged Snacks",
+    "pack_size": "small pack",
+    "aliases": [
+      "lays",
+      "chips",
+      "लेज़"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "namkeen": {
+    "sku": "FOD-NAM-001",
+    "category": "Packaged Snacks",
+    "pack_size": "200 g pack",
+    "aliases": [
+      "mixture",
+      "sev",
+      "नमकीन"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "potato chips": {
+    "sku": "FOD-CHIPS-001",
+    "category": "Packaged Snacks",
+    "pack_size": "small pack",
+    "aliases": [
+      "potato chips",
+      "आलू चिप्स"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "chocolate": {
+    "sku": "FOD-CHOC-001",
+    "category": "Packaged Snacks",
+    "pack_size": "small bar",
+    "aliases": [
+      "chocolate",
+      "चॉकलेट"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "tea": {
+    "sku": "BEV-TEA-001",
+    "category": "Beverages",
+    "pack_size": "250 g pack",
+    "aliases": [
+      "chai patti",
+      "tea powder",
+      "चायपत्ती"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "coffee": {
+    "sku": "BEV-COFFEE-001",
+    "category": "Beverages",
+    "pack_size": "50 g jar",
+    "aliases": [
+      "कॉफी",
+      "coffee powder"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "milk": {
+    "sku": "BEV-MILK-001",
+    "category": "Dairy",
+    "pack_size": "1 litre pouch",
+    "aliases": [
+      "doodh",
+      "दूध"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "curd": {
+    "sku": "BEV-CURD-001",
+    "category": "Dairy",
+    "pack_size": "500 g tub",
+    "aliases": [
+      "dahi",
+      "दही"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "water bottle": {
+    "sku": "BEV-WATER-001",
+    "category": "Beverages",
+    "pack_size": "1 litre bottle",
+    "aliases": [
+      "bottle",
+      "paani bottle",
+      "पानी की बोतल"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "cold drink": {
+    "sku": "BEV-COLA-001",
+    "category": "Beverages",
+    "pack_size": "750 ml bottle",
+    "aliases": [
+      "soft drink",
+      "coldrink",
+      "कोल्ड ड्रिंक"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "juice": {
+    "sku": "BEV-JUICE-001",
+    "category": "Beverages",
+    "pack_size": "1 litre pack",
+    "aliases": [
+      "fruit juice",
+      "जूस"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "soap": {
+    "sku": "PER-SOAP-001",
+    "category": "Personal Care",
+    "pack_size": "1 piece",
+    "aliases": [
+      "sabun",
+      "साबुन"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "shampoo": {
+    "sku": "PER-SHAM-001",
+    "category": "Personal Care",
+    "pack_size": "small sachet",
+    "aliases": [
+      "shampoo sachet",
+      "शैम्पू"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "toothpaste": {
+    "sku": "PER-TOOTH-001",
+    "category": "Personal Care",
+    "pack_size": "100 g tube",
+    "aliases": [
+      "tooth paste",
+      "मंजन",
+      "टूथपेस्ट"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "toothbrush": {
+    "sku": "PER-BRUSH-001",
+    "category": "Personal Care",
+    "pack_size": "1 piece",
+    "aliases": [
+      "brush",
+      "दांतों का ब्रश"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "detergent": {
+    "sku": "HOM-DET-001",
+    "category": "Home Care",
+    "pack_size": "1 kg pack",
+    "aliases": [
+      "detergent powder",
+      "डिटर्जेंट"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "washing powder": {
+    "sku": "HOM-WASH-001",
+    "category": "Home Care",
+    "pack_size": "500 g pack",
+    "aliases": [
+      "surf",
+      "kapde dhone ka powder",
+      "वॉशिंग पाउडर"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "dishwashing bar": {
+    "sku": "HOM-DISHBAR-001",
+    "category": "Home Care",
+    "pack_size": "1 bar",
+    "aliases": [
+      "bartan sabun",
+      "dish bar",
+      "बर्तन साबुन"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "dishwashing liquid": {
+    "sku": "HOM-DISHLIQ-001",
+    "category": "Home Care",
+    "pack_size": "500 ml bottle",
+    "aliases": [
+      "bartan liquid",
+      "dish wash liquid",
+      "बर्तन धोने का लिक्विड"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "turmeric powder": {
+    "sku": "GRO-TURM-001",
+    "category": "Spices",
+    "pack_size": "100 g pack",
+    "aliases": [
+      "haldi",
+      "हल्दी"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "red chilli powder": {
+    "sku": "GRO-CHILLI-001",
+    "category": "Spices",
+    "pack_size": "100 g pack",
+    "aliases": [
+      "mirchi powder",
+      "lal mirch",
+      "लाल मिर्च"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "coriander powder": {
+    "sku": "GRO-CORI-001",
+    "category": "Spices",
+    "pack_size": "100 g pack",
+    "aliases": [
+      "dhaniya powder",
+      "धनिया पाउडर"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "cumin seeds": {
+    "sku": "GRO-CUMIN-001",
+    "category": "Spices",
+    "pack_size": "100 g pack",
+    "aliases": [
+      "jeera",
+      "जीरा"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "asafoetida": {
+    "sku": "GRO-HING-001",
+    "category": "Spices",
+    "pack_size": "10 g pack",
+    "aliases": [
+      "hing",
+      "हींग"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "poha": {
+    "sku": "GRO-POHA-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg pack",
+    "aliases": [
+      "flattened rice",
+      "चिवड़ा",
+      "पोहा"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "semolina": {
+    "sku": "GRO-SOOJI-001",
+    "category": "Grains & Staples",
+    "pack_size": "500 g pack",
+    "aliases": [
+      "sooji",
+      "rava",
+      "सूजी"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "vermicelli": {
+    "sku": "GRO-VERM-001",
+    "category": "Grains & Staples",
+    "pack_size": "150 g pack",
+    "aliases": [
+      "seviyan",
+      "सेवई"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "peanuts": {
+    "sku": "GRO-PEANUT-001",
+    "category": "Grains & Staples",
+    "pack_size": "500 g loose",
+    "aliases": [
+      "moongfali",
+      "मूंगफली"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "jaggery": {
+    "sku": "GRO-JAGGERY-001",
+    "category": "Grains & Staples",
+    "pack_size": "1 kg loose",
+    "aliases": [
+      "gur",
+      "गुड़"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "rusk": {
+    "sku": "FOD-RUSK-001",
+    "category": "Packaged Food",
+    "pack_size": "200 g pack",
+    "aliases": [
+      "toast",
+      "rusk",
+      "टोस्ट"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "wafers": {
+    "sku": "FOD-WAFER-001",
+    "category": "Packaged Snacks",
+    "pack_size": "small pack",
+    "aliases": [
+      "wafer",
+      "वेफर"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  },
+  "popcorn": {
+    "sku": "FOD-POP-001",
+    "category": "Packaged Snacks",
+    "pack_size": "small pack",
+    "aliases": [
+      "pop corn",
+      "पॉपकॉर्न"
+    ],
+    "supplier_name": null,
+    "expiry_date": null
+  }
+}

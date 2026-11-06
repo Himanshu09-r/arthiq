@@ -1,0 +1,60 @@
+name,unit,price,cost_price,stock_qty,reorder_level
+Rice,kg,60,45,,10
+Basmati Rice,kg,105,85,,5
+Whole Wheat,kg,35,28,,10
+Atta,kg,45,38,,15
+Maida,kg,42,34,,5
+Besan,kg,95,78,,5
+Sugar,kg,44,40,,10
+Salt,kg,22,17,,10
+Chana Dal,kg,85,72,,5
+Toor Dal,kg,155,135,,5
+Moong Dal,kg,125,105,,5
+Urad Dal,kg,130,110,,5
+Rajma,kg,135,115,,5
+Chickpeas,kg,98,82,,5
+Mustard Oil,litre,155,138,,6
+Refined Oil,litre,150,132,,6
+Sunflower Oil,litre,165,145,,5
+Ghee,kg,540,480,,3
+Butter,piece,58,48,,5
+Maggi Noodles,packet,14,12,,20
+Instant Noodles,packet,14,11,,10
+Parle-G Biscuits,packet,5,4,,20
+Good Day Biscuits,packet,10,9,,15
+Marie Biscuits,packet,10,9,,10
+Hide & Seek Biscuits,packet,20,19,,8
+Cream Biscuits,packet,10,9,,10
+Kurkure,packet,10,9,,15
+Lays Chips,packet,10,9,,15
+Namkeen,packet,45,38,,8
+Potato Chips,packet,10,9,,12
+Chocolate,piece,10,9,,12
+Tea,packet,120,100,,5
+Coffee,jar,95,80,,3
+Milk,litre,58,54,,10
+Curd,piece,40,34,,5
+Water Bottle,piece,20,12,,12
+Cold Drink,piece,40,35,,8
+Juice,packet,90,75,,5
+Soap,piece,20,15,,10
+Shampoo,packet,2,1,,30
+Toothpaste,piece,55,48,,5
+Toothbrush,piece,25,18,,5
+Detergent,kg,90,78,,5
+Washing Powder,packet,50,42,,5
+Dishwashing Bar,piece,10,9,,12
+Dishwashing Liquid,bottle,75,62,,4
+Turmeric Powder,packet,35,28,,8
+Red Chilli Powder,packet,40,32,,8
+Coriander Powder,packet,30,24,,8
+Cumin Seeds,packet,50,42,,5
+Asafoetida,piece,22,18,,5
+Poha,kg,50,42,,5
+Semolina,packet,28,22,,5
+Vermicelli,packet,22,18,,5
+Peanuts,kg,90,78,,5
+Jaggery,kg,58,48,,5
+Rusk,packet,35,28,,5
+Wafers,packet,10,9,,10
+Popcorn,packet,22,18,,5

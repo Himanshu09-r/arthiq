@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arthiq: Customers</title>
+<style>
+:root{--navy:#002f6c;--cyan:#00b9f5;--bg:#f2f5f9;--card:#fff;--ink:#1a2433;--mut:#6b7a90}
+@media (prefers-color-scheme: dark){:root{--bg:#0e1522;--card:#17202f;--ink:#e8eef7;--mut:#8fa0b8}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:20px}header a{color:#fff}
+main{max-width:1000px;margin:0 auto;padding:16px;display:grid;gap:16px}
+@media(min-width:800px){main{grid-template-columns:1.4fr 1fr}}
+.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 1px 3px #0003}
+.card h2{margin:0 0 10px;font-size:15px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:6px 4px;border-bottom:1px solid #8883;text-align:left}
+tbody tr{cursor:pointer}tbody tr:hover{background:#00b9f522}td.n{text-align:right;font-variant-numeric:tabular-nums}
+input,select{width:100%;padding:8px;margin:4px 0 8px;border-radius:8px;border:1px solid #8884;background:var(--bg);color:var(--ink)}
+button{padding:8px 16px;border:0;border-radius:8px;background:var(--navy);color:#fff;cursor:pointer}
+#msg{margin-top:8px;font-size:14px}.ok{color:#1b7f4b}.bad{color:#d9480f}
+</style></head><body>
+<header><h1>ARTHIQ · Customers</h1><a href="/">← Back to voice</a></header>
+<main>
+ <section class="card"><h2>All customers (tap one for history)</h2>
+  <input id="q" placeholder="Search name, locality or phone">
+  <table><thead><tr><th>ID</th><th>Name</th><th>Locality</th><th>Lang</th><th class="n">Limit</th><th class="n">Due</th></tr></thead>
+  <tbody id="rows"></tbody></table></section>
+ <section>
+  <div class="card"><h2>Add customer manually</h2>
+   <input id="f_name" placeholder="Full name"><input id="f_loc" placeholder="Locality (e.g. Patel Nagar)">
+   <input id="f_phone" placeholder="Phone (10 digits)"><select id="f_lang"></select>
+   <input id="f_limit" type="number" placeholder="Credit limit (default 2000)">
+   <button id="add">Register</button><div id="msg"></div></div>
+  <div class="card" style="margin-top:16px"><h2 id="hTitle">History</h2>
+   <div id="hInfo"></div><table><tbody id="hist"></tbody></table></div>
+ </section>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+let all = [];
+async function api(p, o){const r=await fetch(p,o);const j=await r.json().catch(()=>({}));if(!r.ok)throw j;return j;}
+function td(t,c){const e=document.createElement('td');e.textContent=t;if(c)e.className=c;return e;}
+function render(){
+  const q=$('#q').value.toLowerCase();
+  $('#rows').replaceChildren(...all.filter(c=>[c.name,c.locality,c.phone,c.customer_code].join(' ').toLowerCase().includes(q)).map(c=>{
+    const tr=document.createElement('tr');
+    tr.append(td(c.customer_code||c.id),td(c.name),td(c.locality||''),td(c.language),td('₹'+c.credit_limit,'n'),td('₹'+c.balance,'n'));
+    tr.onclick=()=>showHistory(c.id);return tr;}));
+}
+async function load(){all=await api('/customers');render();}
+async function showHistory(id){
+  const h=await api('/customers/'+id+'/history');const c=h.customer;
+  $('#hTitle').textContent='History: '+c.name+(c.locality?', '+c.locality:'');
+  $('#hInfo').textContent=(c.customer_code||'')+' · phone '+(c.phone||'n/a')+' · limit ₹'+c.credit_limit+' · due ₹'+h.balance;
+  $('#hist').replaceChildren(...h.entries.map(e=>{
+    const tr=document.createElement('tr');
+    tr.append(td(e.date),td(e.type==='credit'?'Udhar':'Paid'),td(e.items||''),td((e.type==='credit'?'+':'-')+'₹'+e.amount,'n'));return tr;}));
+}
+async function init(){
+  (await api('/languages')).forEach(l=>{const o=document.createElement('option');o.value=l.code;o.textContent=l.native+' ('+l.name+')';$('#f_lang').append(o);});
+  load();
+}
+$('#q').oninput=render;
+$('#add').onclick=async()=>{
+  const body={name:$('#f_name').value,locality:$('#f_loc').value||null,phone:$('#f_phone').value||null,
+    language:$('#f_lang').value,credit_limit:$('#f_limit').value?parseInt($('#f_limit').value):null};
+  try{const c=await api('/customers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    $('#msg').className='ok';$('#msg').textContent='Registered '+c.name+' ('+c.customer_code+')';load();}
+  catch(e){const d=e.detail;$('#msg').className='bad';
+    $('#msg').textContent=typeof d==='object'?'Already exists: '+d.name+(d.locality?', '+d.locality:''):(d==='err_bad_phone'?'Phone number is not valid':'Could not register: '+d);}
+};
+init();
+</script></body></html>
