@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARTHIQ · Inventory</title>
+<style>
+:root{--navy:#07366e;--blue:#0784b5;--bg:#f2f5f9;--card:#fff;--ink:#182536;--muted:#63748b;--line:#e4eaf1;--green:#18794e;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,"Segoe UI",sans-serif}header{background:var(--navy);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}header a{color:#fff}main{max-width:1180px;margin:24px auto;padding:0 16px;display:grid;gap:16px}.top{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 1px 4px #00000012}.card h2{margin:0 0 12px;font-size:18px}.muted{color:var(--muted)}.metric{font-size:27px;font-weight:700}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}button,.button{border:0;border-radius:9px;padding:10px 14px;background:var(--navy);color:white;cursor:pointer;text-decoration:none;font:inherit}button.secondary,.button.secondary{background:#e8eef5;color:var(--ink)}button:disabled{opacity:.45;cursor:not-allowed}input[type=file],input[type=search]{max-width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:#172536}label{display:flex;align-items:center;gap:8px}.notice{margin-top:12px;padding:10px 12px;border-radius:8px;background:#eef5fb;white-space:pre-wrap}.notice.error{background:#fff0f0;color:var(--red)}.notice.success{background:#eaf7ef;color:var(--green)}.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted);font-weight:600}td.num{text-align:right;font-variant-numeric:tabular-nums}.low{color:#b54708;font-weight:650}.good{color:var(--green)}#previewBox{display:none}.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}@media(max-width:700px){.top{grid-template-columns:1fr}header{padding:12px}}
+</style></head>
+<body>
+<header><strong>ARTHIQ · INVENTORY</strong><nav><a href="/">← Back to voice assistant</a></nav></header>
+<main>
+  <section class="top">
+    <div class="card"><div class="muted">Products</div><div class="metric" id="productCount">—</div></div>
+    <div class="card"><div class="muted">Low / reorder stock</div><div class="metric" id="lowCount">—</div></div>
+    <div class="card"><div class="muted">Products out of stock</div><div class="metric" id="outCount">—</div></div>
+  </section>
+  <section class="card">
+    <h2>Import or update product catalogue</h2>
+    <p class="muted">Upload a CSV to validate it first. Nothing changes until you review the preview and select Apply. Blank quantity cells do not change existing stock. You can use either the full template or the compact columns: name, unit, price, cost_price, stock_qty, reorder_level. A positive stock_qty is added to current stock.</p>
+    <div class="actions"><input id="csvFile" type="file" accept=".csv,text/csv"><button id="previewBtn">Validate CSV</button><a class="button secondary" href="/inventory/catalogue.csv">Download product catalogue</a><a class="button secondary" href="/inventory/stock-import-template.csv">Download stock template</a></div>
+    <label style="margin-top:14px"><input id="updatePrices" type="checkbox" checked> Update existing product prices from this CSV</label>
+    <div id="uploadMessage" class="notice" style="display:none"></div>
+  </section>
+  <section class="card" id="previewBox">
+    <h2>Import preview</h2><div id="previewSummary" class="muted"></div><div id="previewErrors" class="notice error" style="display:none"></div>
+    <div class="scroll"><table><thead><tr><th>Product</th><th>SKU</th><th>Unit / pack</th><th>Purchase</th><th>Selling</th><th>Quantity to add</th><th>Action</th></tr></thead><tbody id="previewRows"></tbody></table></div>
+    <div class="foot"><span class="muted">Stock is added only for rows with a quantity greater than zero.</span><button id="commitBtn" disabled>Apply import</button></div>
+  </section>
+  <section class="card">
+    <div class="foot"><div><h2 style="margin-bottom:4px">Product catalogue & current stock</h2><div class="muted">Search by product name or voice alias.</div></div><input id="search" type="search" placeholder="Search products…"></div>
+    <div class="scroll"><table><thead><tr><th>Product</th><th>Category</th><th>SKU</th><th>Stock</th><th>Reorder level</th><th>Purchase price</th><th>Selling price</th></tr></thead><tbody id="itemsRows"></tbody></table></div>
+  </section>
+  <section class="card"><h2>Recent stock movements</h2><div class="scroll"><table><thead><tr><th>Time</th><th>Product</th><th>Movement</th><th>Quantity</th><th>Stock after movement</th><th>Source</th></tr></thead><tbody id="movementRows"></tbody></table></div></section>
+  <div id="pageMessage" class="muted"></div>
+</main>
+<script src="/auth.js"></script>
+<script>
+const SHOP=1, $=s=>document.querySelector(s); let currentToken=null, itemsCache=[];
+async function api(url,opts={}){const r=await fetch(url,opts);let body;try{body=await r.json()}catch{body=await r.text()}if(!r.ok){const m=body?.detail?.message||body?.detail||body?.message||JSON.stringify(body);throw new Error(m)}return body}
+function money(v){return '₹'+Number(v||0).toLocaleString('en-IN')}
+function td(text,cls=''){const el=document.createElement('td');el.textContent=text??'';if(cls)el.className=cls;return el}
+async function loadItems(){itemsCache=await api(`/inventory/items?shop_id=${SHOP}`);renderItems()}
+function renderItems(){const q=$('#search').value.trim().toLowerCase();const rows=itemsCache.filter(i=>!q||i.name.toLowerCase().includes(q)||(i.aliases||[]).some(a=>String(a).toLowerCase().includes(q)));$('#itemsRows').replaceChildren(...rows.map(i=>{const tr=document.createElement('tr');tr.append(td(i.name),td(i.category),td(i.sku||'—'),td(`${i.stock_qty} ${i.unit}`,i.low_stock?'low':''),td(`${i.reorder_level} ${i.unit}`),td(money(i.purchase_price),'num'),td(money(i.selling_price),'num'));return tr}));$('#productCount').textContent=itemsCache.length;$('#lowCount').textContent=itemsCache.filter(i=>i.low_stock&&i.stock_qty>0).length;$('#outCount').textContent=itemsCache.filter(i=>i.stock_qty<=0).length}
+async function loadMovements(){const data=await api(`/inventory/movements?shop_id=${SHOP}&limit=40`);$('#movementRows').replaceChildren(...data.map(m=>{const tr=document.createElement('tr');const d=m.timestamp?new Date(m.timestamp).toLocaleString():'—';tr.append(td(d),td(m.item),td(m.movement_type),td(`${m.quantity} ${m.unit}`),td(`${m.new_stock} ${m.unit}`),td(m.source));return tr}))}
+function notice(el,msg,kind=''){el.style.display='block';el.className='notice '+kind;el.textContent=msg}
+$('#previewBtn').onclick=async()=>{const file=$('#csvFile').files[0];if(!file){notice($('#uploadMessage'),'Select a CSV file first.','error');return}const form=new FormData();form.append('file',file);form.append('shop_id',SHOP);$('#previewBtn').disabled=true;notice($('#uploadMessage'),'Validating CSV…');try{const p=await api('/inventory/import/preview',{method:'POST',body:form});currentToken=p.token;$('#previewBox').style.display='block';$('#previewSummary').textContent=`${p.rows.length} rows · ${p.new_count} new products · ${p.update_count} existing products · ${p.stock_in_count} rows will add stock`;$('#previewRows').replaceChildren(...p.rows.map(r=>{const tr=document.createElement('tr');tr.append(td(r.item_name),td(r.sku||'—'),td(`${r.unit}${r.pack_size?' / '+r.pack_size:''}`),td(r.purchase_price==null?'—':money(r.purchase_price),'num'),td(money(r.selling_price),'num'),td(r.quantity?`${r.quantity} ${r.unit}`:'No stock change'),td(r.match_type));return tr}));if(p.errors.length){notice($('#previewErrors'),p.errors.join('\n'),'error');$('#previewErrors').style.display='block'}else{$('#previewErrors').style.display='none'}$('#commitBtn').disabled=!p.can_commit;notice($('#uploadMessage'),p.can_commit?'CSV validated. Review the preview, then apply it.':'CSV has validation errors; fix them and upload again.',p.can_commit?'success':'error')}catch(e){notice($('#uploadMessage'),e.message,'error')}finally{$('#previewBtn').disabled=false}};
+$('#commitBtn').onclick=async()=>{if(!currentToken)return;$('#commitBtn').disabled=true;try{const r=await api('/inventory/import/commit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({shop_id:SHOP,token:currentToken,update_prices:$('#updatePrices').checked})});notice($('#uploadMessage'),r.message,'success');$('#previewBox').style.display='none';currentToken=null;$('#csvFile').value='';await Promise.all([loadItems(),loadMovements()])}catch(e){notice($('#uploadMessage'),e.message,'error');$('#commitBtn').disabled=false}};
+$('#search').oninput=renderItems;
+Promise.all([loadItems(),loadMovements()]).catch(e=>notice($('#pageMessage'),'Could not load inventory: '+e.message,'error'));
+</script></body></html>
