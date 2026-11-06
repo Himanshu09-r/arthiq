@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic>=2
+rapidfuzz
+httpx
+python-dotenv
+python-multipart
+apscheduler
+sarvamai
+pytest
