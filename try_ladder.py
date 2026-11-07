@@ -1,6 +1,7 @@
 import os
 from datetime import date, datetime
 
+
 if os.path.exists("test.db"):
     os.remove("test.db")
 os.environ["DATABASE_URL"] = "sqlite:///test.db"   # throwaway DB, real arthiq.db untouched
