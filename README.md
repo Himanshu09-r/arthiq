@@ -3,7 +3,6 @@
 ARTHIQ combines a shop dashboard with voice-assisted customer ledger, collections, inventory and daily business reporting. The existing dashboard and its customer, ledger, collections, inbox and insights pages are retained.
 
 ## Run locally
-
 Use Python 3.10 or newer. From the project folder:
 
 ```bash
